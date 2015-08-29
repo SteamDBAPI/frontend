@@ -28,6 +28,10 @@ def build_list(session):
         game_list.append(str(game.id) + ":" + game.name)
     session.close()
 
+@app.route('/')
+def index():
+    return "Welcome! Please use the /api/v1 address for access<br>Ex. /api/v1/list"
+
 @app.route('/api/v1/list', methods=['GET'])
 def list():
     return jsonify({'games': game_list})

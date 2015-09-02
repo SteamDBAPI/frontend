@@ -61,5 +61,4 @@ def game_dump(gameid):
 if __name__ == '__main__':
     session = loadSession()
     build_list(session)
-    #app.run(host="0.0.0.0", port=8080, debug=True)
-    app.run(port=8000, debug=True)
+    app.run(port=8000, debug=True, use_reloader=True, extra_files=['games.db'])

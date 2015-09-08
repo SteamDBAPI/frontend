@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 from flask import Flask, jsonify, Response
 from flask.ext.login import LoginManager, UserMixin, login_required
@@ -32,12 +32,13 @@ class User(UserMixin):
 
 @login_manager.request_loader
 def load_user(request):
+    #Code borrowed from: http://thecircuitnerd.com/flask-login-tokens
     token = request.headers.get('Authorization')
     if token is None:
         token = request.args.get('token')
 
     if token is not None:
-        username,password = token.split(":") # naive token
+        username,password = token.split(":")
         check_pass = User.get(username)
         if (check_pass is not None):
             user = User(username,password)

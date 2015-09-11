@@ -91,7 +91,7 @@ def game_dump(gameid):
     except NoResultFound:
         return "No results found for that ID"
     session.close()
-    return jsonify({'name': result.name, 'init_price': result.init_price, 'lowest_price': result.lowest_price, 'highest_price': result.highest_price, 'final_price': result.final_price, 'last_update': result.last_update})
+    return jsonify({'name': result.name, 'init_price': result.init_price, 'lowest_price': result.lowest_price, 'highest_price': result.highest_price, 'final_price': result.final_price, 'last_price_change': result.last_price_change})
 
 if __name__ == '__main__':
     session = loadSession()

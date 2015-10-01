@@ -77,17 +77,17 @@ def list():
     #GET: http://localhost:8000/protected/?token=admin1:password1
     return jsonify({'games': game_list})
 
-#@app.route('/api/v1/dollar', methods=['GET'])
-#def dollar_games():
-#    dollars = {}
-#    try:
-#        results = session.query(Game).filter(and_(Game.final_price <= 100, Game.init_price >= 499)).all()
-#    except NoResultFound:
-#        print("No games found :-(")
-#    session.close()
-#    for game in results:
-#        dollars[game.name] = game.final_price
-#    return Response(json.dumps(dollars))
+@app.route('/api/v1/dollar', methods=['GET'])
+def dollar_games():
+    dollars = {}
+    try:
+        results = session.query(Game, Prices).filter(and_(Prices.final_price <= 100, Prices.initial_price >= 499)).all()
+    except NoResultFound:
+        print("No games found :-(")
+    session.close()
+    for game in results:
+        dollars[game[0].name] = game[1].final_price
+    return Response(json.dumps(dollars))
 
 @app.route('/api/v1/<gameid>', methods=['GET'])
 def game_dump(gameid):

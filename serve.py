@@ -92,11 +92,11 @@ def list():
 @app.route('/api/v1/<gameid>', methods=['GET'])
 def game_dump(gameid):
     try:
-        result = session.query(Prices).filter(Game.id==gameid).filter(Prices.id==gameid).one()
+        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).one()
     except NoResultFound:
         return "No results found for that ID"
     session.close()
-    return jsonify({'initial_price': result.initial_price, 'final_price': result.final_price, 'discount_percent': result.discount_percent, 'timestamp': result.timestamp})
+    return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp})
 
 if __name__ == '__main__':
     session = loadSession()

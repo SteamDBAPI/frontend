@@ -87,7 +87,7 @@ def dollar_games():
     session.close()
     for game in results:
         dollars[game[0].name] = game[1].final_price
-    return Response(json.dumps(dollars))
+    return jsonify({'dollar_games': dollars})
 
 @app.route('/api/v1/<gameid>', methods=['GET'])
 def game_dump(gameid):

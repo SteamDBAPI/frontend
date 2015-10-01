@@ -81,7 +81,7 @@ def list():
 def dollar_games():
     dollars = {}
     try:
-        results = session.query(Game, Prices).filter(and_(Prices.final_price <= 100, Prices.initial_price >= 499)).all()
+        results = session.query(Game, Prices).filter(and_(Prices.final_price <= 100, Prices.initial_price >= 499, Game.id==Prices.id)).all()
     except NoResultFound:
         print("No games found :-(")
     session.close()

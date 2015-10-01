@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from flask import Flask, jsonify, Response
 from flask.ext.login import LoginManager, UserMixin, login_required
@@ -15,7 +15,10 @@ login_manager.init_app(app)
 
 game_list = []
 
-class Games(object):
+class Game(object):
+    pass
+
+class Prices(object):
     pass
 
 class User(UserMixin):
@@ -47,17 +50,19 @@ def load_user(request):
     return None
 
 def loadSession():
-    engine = create_engine('sqlite:///games.db')
+    engine = create_engine('sqlite:///games.db', echo=False)
     metadata = MetaData(engine)
     games_db = Table('games', metadata, autoload=True)
-    mapper(Games, games_db)
+    prices_db = Table('prices', metadata, autoload=True)
+    mapper(Game, games_db)
+    mapper(Prices, prices_db)
     Session = sessionmaker(bind=engine)
     session = Session()
     return session
 
 def build_list(session):
     global game_list
-    result = session.query(Games).all()
+    result = session.query(Game).all()
     for game in result:
         game_list.append(str(game.id) + ":" + game.name)
     session.close()
@@ -72,26 +77,26 @@ def list():
     #GET: http://localhost:8000/protected/?token=admin1:password1
     return jsonify({'games': game_list})
 
-@app.route('/api/v1/dollar', methods=['GET'])
-def dollar_games():
-    dollars = {}
-    try:
-        results = session.query(Games).filter(and_(Games.final_price <= 100, Games.init_price >= 499)).all()
-    except NoResultFound:
-        print("No games found :-(")
-    session.close()
-    for game in results:
-        dollars[game.name] = game.final_price
-    return Response(json.dumps(dollars))
+#@app.route('/api/v1/dollar', methods=['GET'])
+#def dollar_games():
+#    dollars = {}
+#    try:
+#        results = session.query(Game).filter(and_(Game.final_price <= 100, Game.init_price >= 499)).all()
+#    except NoResultFound:
+#        print("No games found :-(")
+#    session.close()
+#    for game in results:
+#        dollars[game.name] = game.final_price
+#    return Response(json.dumps(dollars))
 
 @app.route('/api/v1/<gameid>', methods=['GET'])
 def game_dump(gameid):
     try:
-        result = session.query(Games).filter_by(id=gameid).one()
+        result = session.query(Prices).filter(Game.id==gameid).filter(Prices.id==gameid).one()
     except NoResultFound:
         return "No results found for that ID"
     session.close()
-    return jsonify({'name': result.name, 'init_price': result.init_price, 'lowest_price': result.lowest_price, 'highest_price': result.highest_price, 'final_price': result.final_price, 'last_price_change': result.last_price_change})
+    return jsonify({'initial_price': result.initial_price, 'final_price': result.final_price, 'discount_percent': result.discount_percent, 'timestamp': result.timestamp})
 
 if __name__ == '__main__':
     session = loadSession()

@@ -89,11 +89,11 @@ def dollar_games():
         dollars.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
     return jsonify({'dollar_games': dollars})
 
-@app.route('/api/v1/discount50', methods=['GET'])
-def discount():
+@app.route('/api/v1/discount<pcent>', methods=['GET'])
+def discount(pcent):
     discount = {}
     try:
-        results = session.query(Game, Prices).filter(Prices.discount_percent >= 50, Game.id==Prices.id).all()
+        results = session.query(Game, Prices).filter(Prices.discount_percent >= pcent, Game.id==Prices.id).all()
     except NoResultFound:
         return "No current discounts found. Odd"
     session.close()
@@ -113,4 +113,4 @@ def game_dump(gameid):
 if __name__ == '__main__':
     session = loadSession()
     build_list(session)
-    app.run(port=8000, debug=True, use_reloader=True, extra_files=['games.db'])
+    app.run(port=8000, debug=False, use_reloader=True, extra_files=['games.db'])

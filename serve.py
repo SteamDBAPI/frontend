@@ -76,10 +76,10 @@ def index():
 @app.route('/api/v1/games/list', methods=['GET'])
 @login_required
 def list():
-    #GET: http://localhost:8000/protected/?token=admin1:password1
     return jsonify({'games': game_list})
 
 @app.route('/api/v1/games/dollar', methods=['GET'])
+@login_required
 def dollar_games():
     dollars = {}
     try:
@@ -92,6 +92,7 @@ def dollar_games():
     return jsonify({'dollar_games': dollars})
 
 @app.route('/api/v1/games/discount<int:pcent>', methods=['GET'])
+@login_required
 def discount(pcent):
     discount = {}
     try:
@@ -104,6 +105,7 @@ def discount(pcent):
     return jsonify({'discount': discount})
 
 @app.route('/api/v1/games/<int:gameid>', methods=['GET'])
+@login_required
 def game_dump(gameid):
     try:
         result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).one()

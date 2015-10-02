@@ -81,13 +81,25 @@ def list():
 def dollar_games():
     dollars = {}
     try:
-        results = session.query(Game, Prices).filter(and_(Prices.final_price <= 100, Prices.initial_price >= 499, Game.id==Prices.id)).all()
+        results = session.query(Game, Prices).filter(Prices.final_price <= 100, Prices.initial_price >= 499, Game.id==Prices.id).all()
     except NoResultFound:
-        print("No games found :-(")
+       return "No games matching criteria found"
     session.close()
     for game in results:
-        dollars[game[0].name] = game[1].final_price
+        dollars.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
     return jsonify({'dollar_games': dollars})
+
+@app.route('/api/v1/discount50', methods=['GET'])
+def discount():
+    discount = {}
+    try:
+        results = session.query(Game, Prices).filter(Prices.discount_percent > 50, Game.id==Prices.id).all()
+    except NoResultFound:
+        return "No current discounts found. Odd"
+    session.close()
+    for game in results:
+        discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
+    return jsonify({'discount': discount})
 
 @app.route('/api/v1/<gameid>', methods=['GET'])
 def game_dump(gameid):

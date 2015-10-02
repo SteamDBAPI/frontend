@@ -93,7 +93,7 @@ def dollar_games():
 def discount():
     discount = {}
     try:
-        results = session.query(Game, Prices).filter(Prices.discount_percent > 50, Game.id==Prices.id).all()
+        results = session.query(Game, Prices).filter(Prices.discount_percent >= 50, Game.id==Prices.id).all()
     except NoResultFound:
         return "No current discounts found. Odd"
     session.close()

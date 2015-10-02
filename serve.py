@@ -2,9 +2,9 @@
 
 from flask import Flask, jsonify, Response
 from flask.ext.login import LoginManager, UserMixin, login_required
-from sqlalchemy import create_engine, MetaData, Table, and_, or_
+from sqlalchemy import create_engine, MetaData, Table, and_, or_, desc
 from sqlalchemy.orm import sessionmaker, mapper
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import NoResultFound, MultipleResultsFound
 import json
 
 #Globals
@@ -108,9 +108,11 @@ def discount(pcent):
 @login_required
 def game_dump(gameid):
     try:
-        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).one()
+        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).order_by(Prices.final_price.desc()).limit(1).one()
     except NoResultFound:
         return "No results found for that ID"
+    except MultipleResultsFound:
+        return "Multiple results found. This is a bug!"
     session.close()
     return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp})
 

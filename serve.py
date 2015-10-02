@@ -69,15 +69,15 @@ def build_list(session):
 
 @app.route('/')
 def index():
-    return "Welcome! Please use the /api/v1 address for access<br>Ex. /api/v1/list"
+    return "Welcome! Please use the /api/v1 address for access<br>Ex. /api/v1/games/list"
 
-@app.route('/api/v1/list', methods=['GET'])
+@app.route('/api/v1/games/list', methods=['GET'])
 @login_required
 def list():
     #GET: http://localhost:8000/protected/?token=admin1:password1
     return jsonify({'games': game_list})
 
-@app.route('/api/v1/dollar', methods=['GET'])
+@app.route('/api/v1/games/dollar', methods=['GET'])
 def dollar_games():
     dollars = {}
     try:
@@ -89,7 +89,7 @@ def dollar_games():
         dollars.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
     return jsonify({'dollar_games': dollars})
 
-@app.route('/api/v1/discount<pcent>', methods=['GET'])
+@app.route('/api/v1/games/discount<int:pcent>', methods=['GET'])
 def discount(pcent):
     discount = {}
     try:
@@ -101,7 +101,7 @@ def discount(pcent):
         discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
     return jsonify({'discount': discount})
 
-@app.route('/api/v1/<gameid>', methods=['GET'])
+@app.route('/api/v1/games/<int:gameid>', methods=['GET'])
 def game_dump(gameid):
     try:
         result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).one()

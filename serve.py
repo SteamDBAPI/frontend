@@ -22,19 +22,21 @@ class Prices(object):
     pass
 
 class User(UserMixin):
-    user_database = {"admin1": "password1",
-                     "admin2": "password2"}
 
-    def __init__(self, username, password):
-        self.id = username
-        self.password = password
-
-    @classmethod
-    def get(cls,id):
-        return cls.user_database.get(id)
+    def __init__(self, api_key):
+        self.api_key = api_key
 
 @login_manager.request_loader
 def load_user(request):
+    api_key = request.args.get('api_key')
+    if api_key:
+        user = User("a81be4e9b20632860d20a64c054c4150")
+        if api_key == user.api_key:
+            return user
+    return None
+
+def load_user_old(request):
+    #Defunct code for now, do not use!
     #Code borrowed from: http://thecircuitnerd.com/flask-login-tokens
     token = request.headers.get('Authorization')
     if token is None:

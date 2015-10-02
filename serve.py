@@ -30,7 +30,8 @@ class User(UserMixin):
 def load_user(request):
     api_key = request.args.get('api_key')
     if api_key:
-        user = User("a81be4e9b20632860d20a64c054c4150")
+        #For testing... echo -n user | md5sum
+        user = User("ee11cbb19052e40b07aac0ca060c23ee")
         if api_key == user.api_key:
             return user
     return None

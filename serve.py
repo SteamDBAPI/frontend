@@ -109,7 +109,7 @@ def discount(pcent):
 @login_required
 def game_dump(gameid):
     try:
-        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).order_by(Prices.final_price.desc()).limit(1).one()
+        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).order_by(Prices.final_price.asc()).limit(1).one()
     except NoResultFound:
         return "No results found for that ID"
     except MultipleResultsFound:

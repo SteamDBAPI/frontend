@@ -100,13 +100,14 @@ def dollar_games():
 @login_required
 def discount(pcent):
     discount = {}
+    base_url = "http://store.steampowered.com/app/{}"
     try:
         results = session.query(Game, Prices).filter(Prices.discount_percent >= pcent, Game.id==Prices.id).all()
     except NoResultFound:
         return "No current discounts found. Odd"
     session.close()
     for game in results:
-        discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'discount_percent': game[1].discount_percent}})
+        discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'discount_percent': game[1].discount_percent, 'url': base_url.format(game[0].id)}})
     return jsonify({'discount': discount})
 
 @app.route('/api/v1/games/<int:gameid>', methods=['GET'])

@@ -106,7 +106,7 @@ def discount(pcent):
         return "No current discounts found. Odd"
     session.close()
     for game in results:
-        discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
+        discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'discount_percent': game[1].discount_percent}})
     return jsonify({'discount': discount})
 
 @app.route('/api/v1/games/<int:gameid>', methods=['GET'])

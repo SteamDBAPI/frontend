@@ -102,7 +102,7 @@ def discount(pcent):
     discount = {}
     base_url = "http://store.steampowered.com/app/{}"
     try:
-        results = session.query(Game, Prices).filter(Prices.discount_percent >= pcent, Game.id==Prices.id).all()
+        results = session.query(Game, Prices).filter(Prices.discount_percent >= pcent, Game.id==Prices.id).order_by(Prices.timestamp.desc()).all()
     except NoResultFound:
         return "No current discounts found. Odd"
     session.close()
@@ -114,7 +114,7 @@ def discount(pcent):
 @login_required
 def game_dump(gameid):
     try:
-        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).order_by(Prices.final_price.asc()).limit(1).one()
+        result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).order_by(Prices.timestamp.desc()).limit(1).one()
     except NoResultFound:
         return "No results found for that ID"
     except MultipleResultsFound:

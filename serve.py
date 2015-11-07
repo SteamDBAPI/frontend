@@ -72,11 +72,11 @@ def build_list(session):
 
 @app.route('/')
 def index():
-    return "Welcome! Please use the /api/v1 address for access<br>Ex. /api/v1/games/list\n"
+    return "Welcome! Please use the /api/v1 address for access<br>Ex. /api/v1/games/list<br/>"
 
 @app.route('/robots.txt')
 def robots_txt():
-    return "User-agent: *\nDisallow: /\n"
+    return "User-agent: *<br/>Disallow: /<br/>"
 
 @app.route('/api/v1/games/list', methods=['GET'])
 @login_required

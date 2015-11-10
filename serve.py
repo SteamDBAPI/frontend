@@ -87,13 +87,14 @@ def list():
 @login_required
 def dollar_games():
     dollars = {}
+    base_url = "http://store.steampowered.com/app/{}"
     try:
         results = session.query(Game, Prices).filter(Prices.final_price <= 100, Prices.initial_price >= 499, Game.id==Prices.id).all()
     except NoResultFound:
        return "No games matching criteria found"
     session.close()
     for game in results:
-        dollars.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price}})
+        dollars.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'url': base_url.format(game[0].id)}})
     return jsonify({'dollar_games': dollars})
 
 @app.route('/api/v1/games/discount<int:pcent>', methods=['GET'])
@@ -109,6 +110,19 @@ def discount(pcent):
     for game in results:
         discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'discount_percent': game[1].discount_percent, 'url': base_url.format(game[0].id)}})
     return jsonify({'discount': discount})
+
+@app.route('/api/v1/games/history/<int:gameid>', methods=['GET'])
+@login_required
+def game_history(gameid):
+    history = {}
+    try:
+        results = session.query(Prices).filter(Prices.id==gameid).all()
+    except NoResultFound:
+        return "No history found for that ID"
+    session.close()
+    for hist in results:
+        history.update({str(hist.timestamp): {'timestamp': hist.timestamp, 'final_price': hist.final_price}})
+    return jsonify({'history': history})
 
 @app.route('/api/v1/games/<int:gameid>', methods=['GET'])
 @login_required

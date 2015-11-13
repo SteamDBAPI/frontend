@@ -100,15 +100,24 @@ def dollar_games():
 @app.route('/api/v1/games/discount<int:pcent>', methods=['GET'])
 @login_required
 def discount(pcent):
+    tmpdiscount = {}
     discount = {}
     base_url = "http://store.steampowered.com/app/{}"
     try:
-        results = session.query(Game, Prices).filter(Prices.discount_percent >= pcent, Game.id==Prices.id).order_by(Prices.timestamp.desc()).all()
+        results = session.query(Game, Prices).filter(Game.id==Prices.id).order_by(Prices.timestamp.desc()).all()
     except NoResultFound:
         return "No current discounts found. Odd"
     session.close()
     for game in results:
-        discount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'discount_percent': game[1].discount_percent, 'url': base_url.format(game[0].id)}})
+        if game[0].name not in tmpdiscount:
+            #This approach sucks as it puts every game inside the dict, and then removes the bad entries
+            #We can't check the discount percent since it will only return those that are from an 'old' sale
+            #If we try to remove the discount entries that are not on sale, we'll only be left with the 'old' sale
+            tmpdiscount.update({ game[0].name : {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'discount_percent': game[1].discount_percent, 'url': base_url.format(game[0].id)}})
+    discount.update(tmpdiscount)
+    for game, stats in tmpdiscount.items():
+        if stats["discount_percent"] < pcent:
+            discount.pop(game, None)
     return jsonify({'discount': discount})
 
 @app.route('/api/v1/games/history/<int:gameid>', methods=['GET'])

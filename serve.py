@@ -144,7 +144,7 @@ def game_dump(gameid):
     except MultipleResultsFound:
         return "Multiple results found. This is a bug!"
     session.close()
-    return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp, 'url': base_url.format(game[0].id)})
+    return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp, 'url': base_url.format(result[0].id)})
 
 if __name__ == '__main__':
     session = loadSession()

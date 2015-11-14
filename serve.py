@@ -136,6 +136,7 @@ def game_history(gameid):
 @app.route('/api/v1/games/<int:gameid>', methods=['GET'])
 @login_required
 def game_dump(gameid):
+    base_url = "http://store.steampowered.com/app/{}"
     try:
         result = session.query(Game, Prices).filter(Game.id==gameid).filter(Prices.id==gameid).order_by(Prices.timestamp.desc()).limit(1).one()
     except NoResultFound:
@@ -143,7 +144,7 @@ def game_dump(gameid):
     except MultipleResultsFound:
         return "Multiple results found. This is a bug!"
     session.close()
-    return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp})
+    return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp, 'url': base_url.format(game[0].id)})
 
 if __name__ == '__main__':
     session = loadSession()

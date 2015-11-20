@@ -146,7 +146,9 @@ def game_dump(gameid):
     session.close()
     return jsonify({'name': result[0].name, 'initial_price': result[1].initial_price, 'final_price': result[1].final_price, 'discount_percent': result[1].discount_percent, 'timestamp': result[1].timestamp, 'url': base_url.format(result[0].id)})
 
+#Needed to be here or else the uwsgi breaks
+session = loadSession()
+build_list(session)
+
 if __name__ == '__main__':
-    session = loadSession()
-    build_list(session)
     app.run(port=8000, debug=False, use_reloader=True, extra_files=['games.db'])

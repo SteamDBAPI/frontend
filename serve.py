@@ -32,7 +32,8 @@ def load_user(request):
     if api_key:
         #For testing... echo -n user | md5sum
         user = User("ee11cbb19052e40b07aac0ca060c23ee")
-        if api_key == user.api_key:
+        gonzobot = User("bc27f1291ba22e0c3b298e4070c1bf5a")
+        if api_key == user.api_key or api_key == gonzobot.api_key:
             return user
     return None
 

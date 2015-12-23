@@ -98,6 +98,21 @@ def dollar_games():
         dollars.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'url': base_url.format(game[0].id)}})
     return jsonify({'dollar_games': dollars})
 
+@app.route('/api/v1/games/under10', methods=['GET'])
+@login_required
+def under10_games():
+    #Games on sale that are >$10 but on sale for <$10
+    under10 = {}
+    base_url = "http://store.steampowered.com/app/{}"
+    try:
+        results = session.query(Game, Prices).filter(Prices.final_price <= 999, Prices.initial_price >= 1000, Game.id==Prices.id).all()
+    except NoResultFound:
+       return "No games matching criteria found"
+    session.close()
+    for game in results:
+        under10.update({game[0].name: {'initial_price': game[1].initial_price, 'final_price': game[1].final_price, 'url': base_url.format(game[0].id)}})
+    return jsonify({'under_10_games': under10})
+
 @app.route('/api/v1/games/discount<int:pcent>', methods=['GET'])
 @login_required
 def discount(pcent):
